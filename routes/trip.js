@@ -28,14 +28,15 @@ router.get('/list', function(req, res, next) {
 	})
 })
 
-router.post('/addUser', function(req, res, next) {
-	tripModule.addUser(req.user, req.body, function(err, trip) {
-		if (err) return next(err);
+router.post('/adduser', function(req, res, next) {
+	tripModule.addUser(req.body.trip, req.body.users,
+		function(err, trip) {
+			if (err) return next(err);
 
-		return res.send({
-			trip: trip
-		});
-	})
+			return res.send({
+				trip: trip
+			});
+		})
 })
 
 router.get('/invites', function(req, res, next) {
@@ -48,7 +49,7 @@ router.get('/invites', function(req, res, next) {
 	})
 })
 
-router.post('/removeUser', function(req, res, next) {
+router.post('/removeuser', function(req, res, next) {
 	tripModule.removeUser(req.user, function(err, trip) {
 		return res.send({
 			trip: trip
@@ -56,7 +57,7 @@ router.post('/removeUser', function(req, res, next) {
 	})
 })
 
-router.post('/acceptInvite', function(req, res, next) {
+router.post('/acceptinvite', function(req, res, next) {
 	/* body... */
 })
 module.exports = router;

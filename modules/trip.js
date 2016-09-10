@@ -77,9 +77,41 @@ tripModule.getTrips = function(user, cb) {
 
 tripModule.addUser = function(trip, users, cb) {
 	var users = users ? users.split(',') : undefined;
-	return cb(new Error('Invalid user list for insert'));
-	if (users.length) {
-		return users;
+	if (users && users.length) {
+		var bulkUserTrips = [];
+		users.forEach(function(user) {
+			bulkUserTrips.push({
+				user_id: user,
+				trip_id: trip
+			})
+		});
+		UserTrip.
+		bulkCreate(bulkUserTrips).
+		then(function() {
+			UserTrip.findAll({
+				where: {
+					trip_id: trip
+				},
+				include: [{
+					all: true,
+					nested: true
+				}]
+			}).then(function(userTrips) {
+				var updatedTrip = userTrips[0].get({
+					plain:true
+				});
+				updatedTrip = updatedTrip.trip;
+				delete updatedTrip.user;
+				var tripUsers = [];
+				userTrips.forEach(function(userTrips) {
+					tripUsers.push(userTrips.user);
+				})
+				updatedTrip.users = tripUsers;
+				return cb(null, updatedTrip);
+			})
+		}).catch(function (err) {
+			return cb(err);
+		})
 	} else {
 		return cb(new Error('Invalid user list for insert'));
 	}

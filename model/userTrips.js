@@ -7,11 +7,13 @@ module.exports = function(sequelize, DataTypes) {
 		},
 		trip_id: {
 			type: DataTypes.INTEGER.UNSIGNED,
-			allowedNull: false
+			allowedNull: false,
+			unique: 'compositeIndex'
 		},
 		user_id: {
 			type: DataTypes.INTEGER.UNSIGNED,
-			allowedNull: false
+			allowedNull: false,
+			unique: 'compositeIndex'
 		},
 		status: {
 			type: DataTypes.STRING,

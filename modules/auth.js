@@ -70,43 +70,40 @@ auth.loginUser = function(mobileNumber, otp, cb) {
 			var session = session.get({
 				plain: true
 			})
-			if (session.user_id) {
-				var current_date = (new Date()).valueOf().toString();
-				var random = Math.random().toString();
-				session.token = crypto.createHash('sha1').update(current_date + random).digest('hex');
-				Session.update(session, {
+			var current_date = (new Date()).valueOf().toString();
+			var random = Math.random().toString();
+			session.token = crypto.createHash('sha1').update(current_date + random).digest('hex');
+			Session.update(session, {
+				where: {
+					otp: otp,
+					mobile: mobileNumber
+				}
+			}).spread(function(count) {
+				User.find({
 					where: {
-						otp: otp,
-						mobile: mobileNumber
+						id: session.user_id
 					}
-				}).spread(function(count) {
-					User.find({
-						where: {
-							id: session.user_id
-						}
-					}).then(function(user) {
-						var user = user.get({
-							plain: true
-						})
-						if (!user.verified) {
-							User.update({
-								vrified: true
-							}, {
-								where: {
-									id: user.id
-								}
-							}).spread(function(count) {
-								user.verified = true;
-								user.token = session.token;
-								return cb(null, user);
-							})
-						}
+				}).then(function(user) {
+					var user = user.get({
+						plain: true
 					})
+					if (!user.verified) {
+						User.update({
+							verified: true
+						}, {
+							where: {
+								id: user.id
+							}
+						}).spread(function(count) {
+							user.verified = true;
+							user.token = session.token;
+							return cb(null, user);
+						})
+					}
 				})
-			}
+			})
 		} catch (e) {
-			// statements
-			console.log(e);
+			return cb(e);
 		}
 	})
 }
