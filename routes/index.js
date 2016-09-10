@@ -1,9 +1,27 @@
 var express = require('express');
 var router = express.Router();
-
+var auth = require('../modules/auth');
 /* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
+router.post('/otpLogin', function(req, res, next) {
+	var body = req.body;
+	var mobile = body.mobile;
+	auth.sendOTP(body.mobile, function(err, body) {
+		if (err) {
+			return {
+				failure: true
+			}
+		} else {
+			res.send({
+				sucess: true,
+				message: "OTP sent to mobile number +91" + mobile
+			})
+		}
+	})
+});
+router.post('/login', function(req, res, next) {
+	res.render('index', {
+		title: 'Express'
+	});
 });
 
 module.exports = router;
