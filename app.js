@@ -12,7 +12,12 @@ var config = require('./config');
 var app = express();
 var auth = require('./middleware/auth');
 
+var multipart = require('connect-multiparty');
+var multipartMiddleware = multipart();
+
 process.config = config;
+
+app.use(express.static(path.join(__dirname, 'public')));
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
@@ -21,6 +26,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: false
 }));
+app.use(multipartMiddleware);
 
 app.use(auth);
 app.use('/api', routes);
