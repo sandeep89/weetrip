@@ -13,6 +13,7 @@
     "express-request-wrapper": "^0.1.2",
     "jade": "~1.11.0",
     "morgan": "~1.6.1",
+    "mysql": "^2.11.1",
     "request": "^2.74.0",
     "sequelize": "^3.24.2",
     "serve-favicon": "~2.3.0"

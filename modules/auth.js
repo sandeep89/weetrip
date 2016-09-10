@@ -4,7 +4,7 @@
 
 var auth = module.exports;
 var expressRequest = require('express-request-wrapper');
-
+var model = require('../model');
 auth.sendOTP = function(mobileNumber, cb) {
 	var username = process.config.valueFirst.username;
 	var password = process.config.valueFirst.password;

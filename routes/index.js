@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 var auth = require('../modules/auth');
 /* GET home page. */
-router.post('/otpLogin', function(req, res, next) {
+router.post('/sendotp', function(req, res, next) {
 	var body = req.body;
 	var mobile = body.mobile;
 	auth.sendOTP(body.mobile, function(err, body) {
