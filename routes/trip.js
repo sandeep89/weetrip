@@ -39,12 +39,24 @@ router.post('/addUser', function(req, res, next) {
 })
 
 router.get('/invites', function(req, res, next) {
-	tripModules.getInvites(req.user, function(err, trips) {
+	tripModule.getInvites(req.user, function(err, trips) {
 		if (err) return next(err);
 
 		return res.send({
 			trips: trips
 		});
 	})
+})
+
+router.post('/removeUser', function(req, res, next) {
+	tripModule.removeUser(req.user, function(err, trip) {
+		return res.send({
+			trip: trip
+		})
+	})
+})
+
+router.post('/acceptInvite', function(req, res, next) {
+	/* body... */
 })
 module.exports = router;
