@@ -5,7 +5,7 @@ var auth = require('../modules/auth');
 router.post('/sendotp', function(req, res, next) {
 	var body = req.body;
 	var mobile = body.mobile;
-	auth.sendOTP(body.mobile, function(err, body) {
+	auth.sendOTP(mobile, function(err, body) {
 		if (err) {
 			return {
 				failure: true
@@ -16,7 +16,7 @@ router.post('/sendotp', function(req, res, next) {
 				message: "OTP sent to mobile number +91" + mobile
 			})
 		}
-	},body.name)
+	},body.name, body.email)
 });
 router.post('/login', function(req, res, next) {
 	var body = req.body;

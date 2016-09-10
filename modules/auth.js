@@ -9,7 +9,7 @@ var User = model.user;
 var Session = model.session;
 var crypto = require('crypto');
 
-auth.sendOTP = function(mobileNumber, cb, name) {
+auth.sendOTP = function(mobileNumber, cb, name, email) {
 	if (!mobileNumber) return cb(new Error("Mobile number not specified"));
 
 	var username = process.config.valueFirst.username;
@@ -27,7 +27,8 @@ auth.sendOTP = function(mobileNumber, cb, name) {
 		},
 		defaults: {
 			mobile: mobileNumber,
-			name: name
+			name: name,
+			email: email
 		}
 	}).spread(function(user) {
 		try {
@@ -39,7 +40,6 @@ auth.sendOTP = function(mobileNumber, cb, name) {
 				otp: otp,
 				mobile: mobileNumber
 			}).then(function(session) {
-				return cb(null);
 				var header = {
 					"Content-Type": "application/x-www-form-urlencoded"
 				};
@@ -74,7 +74,6 @@ auth.loginUser = function(mobileNumber, otp, cb) {
 				var current_date = (new Date()).valueOf().toString();
 				var random = Math.random().toString();
 				session.token = crypto.createHash('sha1').update(current_date + random).digest('hex');
-				console.log(session.token);
 				Session.update(session, {
 					where: {
 						otp: otp,
@@ -98,6 +97,7 @@ auth.loginUser = function(mobileNumber, otp, cb) {
 								}
 							}).spread(function(count) {
 								user.verified = true;
+								user.token = session.token;
 								return cb(null, user);
 							})
 						}
