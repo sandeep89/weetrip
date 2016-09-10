@@ -7,9 +7,6 @@ var Trip = model.trip;
 var tripModule = module.exports;
 
 tripModule.createTrip = function(user, body, cb) {
-	if (!user) {
-		return cb(new Error('Invalid session token'))
-	}
 	body.created_by = user.id;
 	Trip.findOrCreate({
 		where: {
@@ -23,6 +20,27 @@ tripModule.createTrip = function(user, body, cb) {
 				plan: true
 			});
 			return cb(null, trip);
+		} catch (e) {
+			return cb(e);
+		}
+	})
+}
+
+tripModule.getTrips = function(user, cb) {
+	Trip.findAll({
+		where: {
+			created_by: user.id
+		}
+	}).then(function(trips) {
+		try {
+			var plainTrips = [];
+			trips.forEach(
+				function(trip) {
+					plainTrips.push(trip.get({
+						plain: true
+					}))
+				});
+			return cb(null, plainTrips);
 		} catch (e) {
 			return cb(e);
 		}

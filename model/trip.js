@@ -28,6 +28,11 @@ module.exports = function(sequelize, DataTypes) {
 		created_by: {
 			type: DataTypes.INTEGER.UNSIGNED,
 			allowedNull: false
+		},
+		status: {
+			type: DataTypes.STRING,
+			allowedNull: false,
+			defaultValue: 'ACTIVE'
 		}
 	}, {
 		classMethods: {
