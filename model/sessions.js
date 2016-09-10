@@ -3,7 +3,7 @@
  */
 
 module.exports = function(sequelize, DataTypes) {
-	var user = sequelize.define("session", {
+	var session = sequelize.define("session", {
 		id: {
 			type: DataTypes.INTEGER.UNSIGNED,
 			primaryKey: true,
@@ -25,7 +25,15 @@ module.exports = function(sequelize, DataTypes) {
 			type: DataTypes.STRING,
 			allowNull: false
 		}
+	}, {
+		classMethods: {
+			associate: function(models) {
+				session.belongsTo(models.user, {
+					foreignKey: 'user_id'
+				})
+			}
+		}
 	});
 
-	return user;
+	return session;
 };
