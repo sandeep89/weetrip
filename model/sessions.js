@@ -3,7 +3,7 @@
  */
 
 module.exports = function(sequelize, DataTypes) {
-	var user = sequelize.define("sessions", {
+	var user = sequelize.define("session", {
 		id: {
 			type: DataTypes.INTEGER.UNSIGNED,
 			primaryKey: true,

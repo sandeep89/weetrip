@@ -12,7 +12,7 @@ router.post('/sendotp', function(req, res, next) {
 			}
 		} else {
 			res.send({
-				sucess: true,
+				success: true,
 				message: "OTP sent to mobile number +91" + mobile
 			})
 		}

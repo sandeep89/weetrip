@@ -5,7 +5,11 @@
 var auth = module.exports;
 var expressRequest = require('express-request-wrapper');
 var model = require('../model');
+var User = model.user;
+var Session = model.session;
 auth.sendOTP = function(mobileNumber, cb) {
+	if (!mobileNumber) return cb(new Error("Mobile number not specified"));
+
 	var username = process.config.valueFirst.username;
 	var password = process.config.valueFirst.password;
 	var otp = Math.floor(100000 + Math.random() * 900000);
@@ -14,15 +18,38 @@ auth.sendOTP = function(mobileNumber, cb) {
 		password + '%22%2F%3E%0D%0A%3CSMS++UDH%3D%220%22+CODING%3D%221%22+TEXT%3D%22%22+PROPERTY%3D%220%22+ID%3D%221%22%3E%0D%0A%3CADDRESS+FROM%3D%22%22+TO%3D%22%22+SEQ%3D%221%22+TAG%3D%22some+clientside+random+data%22%2F%3E%0D%0A%3C%2FSMS%3E%0D%0A%3CSMS+UDH%3D%220%22+CODING%3D%221%22+TEXT%3D%22Weetrip+mobile+verification+code+-+' +
 		otp + '%22+PROPERTY%3D%220%22+ID%3D%222%22%3E%0D%0A%3CADDRESS+FROM%3D%22practo%22+TO%3D%22%2B91' +
 		mobileNumber + '%22+SEQ%3D%221%22+TAG%3D%22%22+%2F%3E%0D%0A%3C%2FSMS%3E%0D%0A%3C%2FMESSAGE%3E&action=send';
-	var header = {
-		"Content-Type": "application/x-www-form-urlencoded"
-	};
-	var url = 'http://api.myvaluefirst.com/psms/servlet/psms.Eservice2';
-	expressRequest.makePostCall(url, data, header,
-		function(err, body, response) {
-			if (err) {
-				return cb(err);
-			}
-			return cb(null, body);
-		}, true)
+
+	User.findOrCreate({
+		where: {
+			mobile: mobileNumber
+		},
+		defaults: {
+			mobile: mobileNumber
+		}
+	}).spread(function(user) {
+		try {
+			var user = user.get({
+				plain: true
+			});
+			Session.create({
+				user_id: user.id,
+				otp: otp
+			}).then(function(session) {
+				var header = {
+					"Content-Type": "application/x-www-form-urlencoded"
+				};
+				var url = 'http://api.myvaluefirst.com/psms/servlet/psms.Eservice2';
+				expressRequest.makePostCall(url, data, header,
+					function(err, body, response) {
+						if (err) {
+							return cb(err);
+						}
+						return cb(null, body);
+					}, true)
+			})
+		} catch (e) {
+			console.log(e);
+			return cb(new Error("Unable to find user"));
+		}
+	});
 }
