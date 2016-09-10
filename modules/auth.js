@@ -66,6 +66,7 @@ auth.loginUser = function(mobileNumber, otp, cb) {
 			mobile: mobileNumber
 		}
 	}).then(function(session) {
+		console.log(session);
 		try {
 			var session = session.get({
 				plain: true
@@ -99,10 +100,14 @@ auth.loginUser = function(mobileNumber, otp, cb) {
 							user.token = session.token;
 							return cb(null, user);
 						})
+					}else{
+						user.token = session.token;
+						return cb(null, user);
 					}
 				})
 			})
 		} catch (e) {
+			console.log(e);
 			return cb(e);
 		}
 	})

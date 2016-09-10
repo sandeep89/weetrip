@@ -24,9 +24,7 @@ router.post('/login', function(req, res, next) {
 	var otp = req.body.otp;
 	auth.loginUser(mobile, otp, function(err, user) {
 		if (err) {
-			return {
-				failure: true
-			}
+			return next(err);
 		} else {
 			res.send({
 				user: user

@@ -31,6 +31,8 @@ tripModule.createTrip = function(user, body, cb) {
 		} catch (e) {
 			return cb(e);
 		}
+	}).catch(function(err) {
+		return cb(err);
 	})
 }
 
@@ -98,7 +100,7 @@ tripModule.addUser = function(trip, users, cb) {
 				}]
 			}).then(function(userTrips) {
 				var updatedTrip = userTrips[0].get({
-					plain:true
+					plain: true
 				});
 				updatedTrip = updatedTrip.trip;
 				delete updatedTrip.user;
@@ -109,7 +111,7 @@ tripModule.addUser = function(trip, users, cb) {
 				updatedTrip.users = tripUsers;
 				return cb(null, updatedTrip);
 			})
-		}).catch(function (err) {
+		}).catch(function(err) {
 			return cb(err);
 		})
 	} else {
