@@ -16,12 +16,23 @@ router.post('/sendotp', function(req, res, next) {
 				message: "OTP sent to mobile number +91" + mobile
 			})
 		}
-	})
+	},body.name)
 });
 router.post('/login', function(req, res, next) {
-	res.render('index', {
-		title: 'Express'
-	});
+	var body = req.body;
+	var mobile = req.body.mobile;
+	var otp = req.body.otp;
+	auth.loginUser(mobile, otp, function(err, user) {
+		if (err) {
+			return {
+				failure: true
+			}
+		} else {
+			res.send({
+				user: user
+			});
+		}
+	})
 });
 
 module.exports = router;

@@ -7,7 +7,9 @@ var expressRequest = require('express-request-wrapper');
 var model = require('../model');
 var User = model.user;
 var Session = model.session;
-auth.sendOTP = function(mobileNumber, cb) {
+var crypto = require('crypto');
+
+auth.sendOTP = function(mobileNumber, cb, name) {
 	if (!mobileNumber) return cb(new Error("Mobile number not specified"));
 
 	var username = process.config.valueFirst.username;
@@ -24,7 +26,8 @@ auth.sendOTP = function(mobileNumber, cb) {
 			mobile: mobileNumber
 		},
 		defaults: {
-			mobile: mobileNumber
+			mobile: mobileNumber,
+			name: name
 		}
 	}).spread(function(user) {
 		try {
@@ -33,8 +36,10 @@ auth.sendOTP = function(mobileNumber, cb) {
 			});
 			Session.create({
 				user_id: user.id,
-				otp: otp
+				otp: otp,
+				mobile: mobileNumber
 			}).then(function(session) {
+				return cb(null);
 				var header = {
 					"Content-Type": "application/x-www-form-urlencoded"
 				};
@@ -52,4 +57,56 @@ auth.sendOTP = function(mobileNumber, cb) {
 			return cb(new Error("Unable to find user"));
 		}
 	});
+}
+
+auth.loginUser = function(mobileNumber, otp, cb) {
+	Session.find({
+		where: {
+			otp: otp,
+			mobile: mobileNumber
+		}
+	}).then(function(session) {
+		try {
+			var session = session.get({
+				plain: true
+			})
+			if (session.user_id) {
+				var current_date = (new Date()).valueOf().toString();
+				var random = Math.random().toString();
+				session.token = crypto.createHash('sha1').update(current_date + random).digest('hex');
+				console.log(session.token);
+				Session.update(session, {
+					where: {
+						otp: otp,
+						mobile: mobileNumber
+					}
+				}).spread(function(count) {
+					User.find({
+						where: {
+							id: session.user_id
+						}
+					}).then(function(user) {
+						var user = user.get({
+							plain: true
+						})
+						if (!user.verified) {
+							User.update({
+								vrified: true
+							}, {
+								where: {
+									id: user.id
+								}
+							}).spread(function(count) {
+								user.verified = true;
+								return cb(null, user);
+							})
+						}
+					})
+				})
+			}
+		} catch (e) {
+			// statements
+			console.log(e);
+		}
+	})
 }

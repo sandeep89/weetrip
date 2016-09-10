@@ -20,6 +20,10 @@ module.exports = function(sequelize, DataTypes) {
 		token: {
 			type: DataTypes.STRING,
 			allowNull: true
+		},
+		mobile: {
+			type: DataTypes.STRING,
+			allowNull: false
 		}
 	});
 
