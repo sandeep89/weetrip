@@ -1,2 +1,2 @@
 # weetrip
-API-Service for weetrip app
+API-Service for wetrip app
