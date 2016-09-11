@@ -43,7 +43,11 @@ tripModule.getTrip = function(query, cb) {
 	Trip.find({
 		where: {
 			id: query.trip
-		}
+		},
+		include: [{
+			all: true,
+			nested: true
+		}]
 	}).then(function(trip) {
 		var trip = trip.get({
 			plain: true
@@ -88,6 +92,8 @@ tripModule.getTrip = function(query, cb) {
 				})
 			}
 		], function(err, result) {
+			trip.owner = trip.user;
+			delete trip.user;
 			return cb(null, trip);
 		});
 	})
@@ -212,7 +218,7 @@ tripModule.uploadFiles = function(user, files, body, cb) {
 		// newPath = "/" + newPath + "/" + file.name;
 		// fs.rename(file.path, newPath, function(err) {
 		// 	if (err) return cb(err);
-			uploadedFiles.push({
+		uploadedFiles.push({
 				url: "http://ec2-54-172-101-14.compute-1.amazonaws.com/" + newPath,
 				name: file.name,
 				trip_id: parseInt(body.trip),
@@ -221,7 +227,7 @@ tripModule.uploadFiles = function(user, files, body, cb) {
 				type: file.type
 			})
 			//file.path = newPath;
-			return callb(null);
+		return callb(null);
 		//});
 	}, function(err) {
 		if (err) return cb(err);

@@ -33,6 +33,10 @@ module.exports = function(sequelize, DataTypes) {
         email_verified: {
             type: DataTypes.BOOLEAN,
             defaultValue: false
+        },
+        photo_url: {
+            type: DataTypes.STRING,
+            allowNull: true
         }
     });
 
