@@ -206,23 +206,22 @@ tripModule.uploadFiles = function(user, files, body, cb) {
 	var uploadedFiles = [];
 	async.each(files, function(file, callb) {
 		var newPath = file.path.split('/');
-		newPath.pop();
-		newPath.splice(0, 1);
-		newPath = newPath.join('/');
-		newPath = "/" + newPath + "/" + file.name;
-		console.log(newPath, file.path);
-		fs.rename(file.path, newPath, function(err) {
-			if (err) return cb(err);
+		newPath = newPath.pop();
+		// newPath.splice(0, 1);
+		// newPath = newPath.join('/');
+		// newPath = "/" + newPath + "/" + file.name;
+		// fs.rename(file.path, newPath, function(err) {
+		// 	if (err) return cb(err);
 			uploadedFiles.push({
-				url: newPath,
+				url: "http://ec2-54-172-101-14.compute-1.amazonaws.com/" + newPath,
 				name: file.name,
 				trip_id: parseInt(body.trip),
 				user_id: user.id,
 				meta: JSON.stringify(file),
 				type: file.type
 			})
-			file.path = newPath;
-			return callb(err);
+			//file.path = newPath;
+			return callb(null);
 		});
 	}, function(err) {
 		if (err) return cb(err);

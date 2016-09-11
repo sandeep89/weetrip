@@ -30,7 +30,7 @@ router.get('/list', function(req, res, next) {
 	})
 })
 
-router.get('/getTrip', function(req, res, next) {
+router.get('/gettrip', function(req, res, next) {
 	console.log(req.query, req.params);
 	tripModule.getTrip(req.query, function(err, trip) {
 		if (err) return next(err)
