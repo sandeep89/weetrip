@@ -222,7 +222,7 @@ tripModule.uploadFiles = function(user, files, body, cb) {
 			})
 			//file.path = newPath;
 			return callb(null);
-		});
+		//});
 	}, function(err) {
 		if (err) return cb(err);
 		_File.bulkCreate(uploadedFiles).then(function() {
